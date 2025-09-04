@@ -133,11 +133,29 @@
                             <button type="button" onclick="closePaymentModal()" class="flex-1 bg-gray-500 text-white px-4 py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
                                 Ghairi
                             </button>
-                            <button type="submit" class="flex-1 bg-green-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                            <button type="submit" id="payButton" class="flex-1 bg-green-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
                                 Lipia 20,000
                             </button>
                         </div>
                     </form>
+                    
+                    <!-- Payment Success Section (Hidden initially) -->
+                    <div id="paymentSuccessSection" class="hidden mt-4">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                            <div class="flex items-center mb-2">
+                                <span class="text-green-600 text-2xl mr-2">✅</span>
+                                <h4 class="text-green-800 font-semibold">Malipo yameanzishwa!</h4>
+                            </div>
+                            <p class="text-green-700 text-sm">Tafadhali thibitisha malipo kwenye simu yako.</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="text-gray-600 mb-3">Ukiisha malipo, bonyeza hapa:</p>
+                            <button onclick="redirectToWhatsApp()" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                                TAYARI NIMELIPIA
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -261,6 +279,8 @@
         function closePaymentModal() {
             document.getElementById('paymentModal').classList.add('hidden');
             document.getElementById('paymentForm').reset();
+            document.getElementById('paymentForm').style.display = 'block';
+            document.getElementById('paymentSuccessSection').classList.add('hidden');
         }
 
         // Close modal when clicking outside
@@ -288,7 +308,7 @@
                 return;
             }
 
-            // Process payment with ZenoPay
+            // Process payment with ClubZila
             processPayment(phoneNumber);
         });
 
@@ -323,11 +343,7 @@
                 // Check if payment was successful
                 if (data.success || data.status === 'success' || data.payment_id) {
                     // Payment initiated successfully
-                    alert('Malipo yameanzishwa! Tafadhali thibitisha malipo kwenye simu yako.');
-                    closePaymentModal();
-                    
-                    // Optional: Redirect to success page or show additional info
-                    // window.location.href = '/payment-success';
+                    showPaymentSuccessSection();
                 } else {
                     throw new Error(data.message || data.error || 'Malipo yameshindwa');
                 }
@@ -342,7 +358,25 @@
                 submitBtn.disabled = false;
             });
         }
+
+        // Show payment success section
+        function showPaymentSuccessSection() {
+            // Hide the form
+            document.getElementById('paymentForm').style.display = 'none';
+            
+            // Show success section
+            document.getElementById('paymentSuccessSection').classList.remove('hidden');
+        }
+
+        // Redirect to WhatsApp
+        function redirectToWhatsApp() {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const message = `Asante! Malipo yamekamilika. Tafadhali nitumie All-in-One Business Starter Kit. Namba yangu: ${phoneNumber}`;
+            const whatsappUrl = `https://wa.me/255754546567?text=${encodeURIComponent(message)}`;
+            
+            window.open(whatsappUrl, '_blank');
+            closePaymentModal();
+        }
     </script>
 </body>
 </html>
-
